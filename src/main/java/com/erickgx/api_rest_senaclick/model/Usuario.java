@@ -32,7 +32,7 @@ public abstract class Usuario {
 
     @Column(nullable = false)
     @NotBlank
-    @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres")
+    @Size(min = 8, message = "A senha deve ter no mínimo 6 caracteres")
     @JsonProperty(access = Access.WRITE_ONLY)
     private String senha;
 

@@ -3,20 +3,26 @@ package com.erickgx.api_rest_senaclick.controller;
 import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.repository.ClienteRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 @RequestMapping("/cliente")
+@Slf4j
 public class ClienteController {
 
-    @Autowired
-    private ClienteRepository repository;
+
+    //injeção de Dependencia Via construtor
+   private final ClienteRepository repository;
+
+    public ClienteController(ClienteRepository repository) {
+        this.repository = repository;
+    }
 
     @PostMapping
     public ResponseEntity<Object> criarCliente(@RequestBody @Valid Cliente cliente) {
@@ -24,48 +30,79 @@ public class ClienteController {
            repository.save(cliente);
            return ResponseEntity.created(URI.create("/cliente"+cliente.getId())).body(cliente);
       }catch (Exception e){
-          e.printStackTrace();
-          String erro = e.getMessage();
-          return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+          log.error("Erro ao cadastrar o admin: {}", e.getMessage(), e); //log de erro severo para depuração
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
       }
     }
 
+
     @GetMapping
-    public ResponseEntity<Iterable<Cliente>> listarTodos(){
-        return ResponseEntity.ok(repository.findAll());
+    //diferentes codigos para lista vazia e lista com dados
+    public ResponseEntity<List<Cliente>> listarAdmins(){
+        List<Cliente> admins = repository.findAll();
+
+        if (admins.isEmpty()){
+            log.warn("Nenhum admin encontrado."); // Log de aviso
+            return ResponseEntity.notFound().build();
+        }
+        log.info("Listando {} produtos.", admins.size()); // Log de sucesso
+        return ResponseEntity.ok(admins);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarPorId (@PathVariable("id") Long id){
-        Optional<Cliente> tipo = repository.findById(id);
-        if (tipo.isPresent()){
-            return ResponseEntity.ok(tipo.get());
-        }else {
-            return ResponseEntity.notFound().build(); //build é para montar o objeto not found
+    public ResponseEntity<Cliente> buscarPorId(@PathVariable("id") Long id){
+        return repository.findById(id)
+                //.map() é útil quando queremos transformar um valor, caso ele exista(Optionals), muito util em Get id's.
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Cliente> atualizarClienteParcialmente(@RequestBody @Valid Cliente clienteAtualizacao, @PathVariable Long id){
+        return repository.findById(id)
+                .map(clienteExistente -> atualizarCamposPermitidos(clienteExistente, clienteAtualizacao))
+                .map(atualizado -> {
+                    log.info("Cliente atualizado com sucesso: {}", id);
+                    return ResponseEntity.ok(atualizado);
+                })
+                .orElseGet(() -> {
+                    log.warn("Tentativa de atualizar cliente inexistente: {}", id);
+                    return ResponseEntity.notFound().build();
+                });
+    }
+
+    private Cliente atualizarCamposPermitidos(Cliente destino , Cliente origem){
+        if (origem.getNome() != null) {
+            destino.setNome(origem.getNome());
+        }
+        if (origem.getSobrenome() != null) {
+            destino.setSobrenome(origem.getSobrenome());
+        }
+        // Ignora email e senha propositalmente
+        return repository.save(destino);
+    }
+
+
+
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        if (repository.existsById(id)) {  // Verifica se o ID existe antes de tentar deletar
+            repository.deleteById(id);
+            log.info("Admin cliente com id: {}", id); //log de sucesso
+            return ResponseEntity.noContent().build(); // Retorna 204 No Content quando a exclusão é bem-sucedida
+        } else {
+            log.warn("Tentativa de cliente admin com ID inexistente: {}", id);  // Log de aviso
+            return ResponseEntity.notFound().build(); // Retorna 404 caso o registro não exista
         }
     }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> alterarTipo(@RequestBody Cliente tipo, @PathVariable Long id){
-        try {
-            //salvar no banco
-            repository.save(tipo);
-            return ResponseEntity.ok().build();
-        }catch (Exception e){
-            e.printStackTrace();
-            String erro = e.getMessage();
-            return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
-
-
-    @DeleteMapping("/{id}")//PathVar especifica que vai ser recebida via parametro da requisicao
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
-        repository.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
 
 
 

@@ -1,5 +1,6 @@
 package com.erickgx.api_rest_senaclick.model;
 
+import com.erickgx.api_rest_senaclick.enums.TipoPagamento;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +20,8 @@ public class ClientePlano {
     @ManyToOne
     private Plano plano;
 
-    private String pagamento;
+    @Enumerated(EnumType.STRING) //Valores fixos não variaveis é recomendado o uso de Enums
+    private TipoPagamento tipoPagamento;
 
     @Column(name = "data_assinatura")
     private LocalDateTime dataAssinatura;
