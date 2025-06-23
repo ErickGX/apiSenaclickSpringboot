@@ -1,5 +1,6 @@
 package com.erickgx.api_rest_senaclick.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class Plano {
 
 
     @OneToMany(mappedBy = "plano")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<ClientePlano> clientes;
 
 

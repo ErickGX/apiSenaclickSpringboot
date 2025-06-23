@@ -19,6 +19,7 @@ public abstract class Usuario {
 
     @Column(nullable = false)
     @NotBlank(message = "Nome é obrigatório")
+    @JsonProperty("primeiroNome") //o campo via JSON vem como primeiroNome , não é necessario alterar o frontend
     private String nome;
 
     @Column(nullable = false)

@@ -50,7 +50,7 @@ public class AdministradorController {
 
         if (admins.isEmpty()){
             log.warn("Nenhum admin encontrado."); // Log de aviso
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.noContent().build();
         }
         log.info("Listando {} produtos.", admins.size()); // Log de sucesso
         return ResponseEntity.ok(admins);
