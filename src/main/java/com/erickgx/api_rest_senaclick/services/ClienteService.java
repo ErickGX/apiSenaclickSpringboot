@@ -1,32 +1,51 @@
 package com.erickgx.api_rest_senaclick.services;
 
 
-import com.erickgx.api_rest_senaclick.enums.TipoPagamento;
 import com.erickgx.api_rest_senaclick.exceptions.DuplicateEmailException;
 import com.erickgx.api_rest_senaclick.exceptions.ResourceNotFoundException;
 import com.erickgx.api_rest_senaclick.model.Cliente;
-import com.erickgx.api_rest_senaclick.model.Plano;
 import com.erickgx.api_rest_senaclick.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ClienteService {
 
-    private final ClienteRepository Clienterepository;
+    private final ClienteRepository clienterepository;
 
     public ClienteService(ClienteRepository Clienterepository) {
-        this.Clienterepository = Clienterepository;
+        this.clienterepository = Clienterepository;
     }
 
     public Cliente cadastrarCliente(Cliente cliente){
 
-        if (Clienterepository.existsByEmail(cliente.getEmail())){
+        if (clienterepository.existsByEmail(cliente.getEmail())){
             throw new DuplicateEmailException("Já existe um cliente com esse e-mail");
         }
 
         // Cadastro novo cliente
-        Cliente novoCliente = Clienterepository.save(cliente);
+        Cliente novoCliente = clienterepository.save(cliente);
 
         return novoCliente;
+    }
+
+    //Regra de negocio pode ter lista vazia , caso não , Lançar exceptions
+    public List<Cliente> listarTodosClientes(){
+        return clienterepository.findAll();
+    }
+
+    public Cliente buscarClientePorId(Long idCliente){
+        return clienterepository.findById(idCliente)
+                .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado cliente com ID: "+idCliente));
+
+    }
+
+    public void deletarClientePorId(Long idCliente){
+      Cliente cliente =  clienterepository.findById(idCliente)
+              .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado cliente com ID: "+idCliente+" para excluir"));
+
+       clienterepository.deleteById(idCliente);
     }
 }
