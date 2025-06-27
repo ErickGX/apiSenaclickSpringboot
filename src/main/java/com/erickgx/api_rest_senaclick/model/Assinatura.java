@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-public class ClientePlano {
+public class Assinatura {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

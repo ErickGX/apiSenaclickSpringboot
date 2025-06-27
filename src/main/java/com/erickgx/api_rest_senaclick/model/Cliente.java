@@ -10,7 +10,7 @@ import java.util.List;
 public class Cliente extends Usuario {
 
     @OneToMany(mappedBy = "cliente")
-    private List<ClientePlano> planos;
+    private List<Assinatura> planos;
 
 
 
