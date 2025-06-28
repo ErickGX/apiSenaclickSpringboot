@@ -26,7 +26,7 @@ public class Plano {
     @NotBlank
     private String edicao;
     @NotBlank
-    private String textoBotao;
+    private String texto_botao;
     @NotBlank
     private String classe;
 

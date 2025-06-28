@@ -4,8 +4,10 @@ package com.erickgx.api_rest_senaclick.controller;
 import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.model.Plano;
 import com.erickgx.api_rest_senaclick.repository.PlanoRepository;
+import com.erickgx.api_rest_senaclick.services.PlanoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,56 +20,39 @@ import java.util.List;
 @Slf4j
 public class PlanoController {
 
-    private final PlanoRepository repository;
+    private final PlanoService planoService;
 
-    public PlanoController(PlanoRepository repository) {
-        this.repository = repository;
+    public PlanoController(PlanoService planoService) {
+        this.planoService = planoService;
     }
 
     @PostMapping
-    public ResponseEntity<Object> criarCliente(@RequestBody @Valid Plano plano) {
-        try {
-            repository.save(plano);
-            return ResponseEntity.created(URI.create("/cliente"+plano.getId())).body(plano);
-        }catch (Exception e){
-            log.error("Erro ao cadastrar o admin: {}", e.getMessage(), e); //log de erro severo para depuração
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<Object> criarPlano(@RequestBody @Valid Plano plano) {
+
+        Plano planoSalvo = planoService.cadastrarPlano(plano);
+        URI location = URI.create("/plano/" + planoSalvo.getId());
+        return ResponseEntity.created(location).body(planoSalvo);
     }
 
 
     @GetMapping
-    //diferentes codigos para lista vazia e lista com dados
-    public ResponseEntity<List<Plano>> listarAdmins(){
-        List<Plano> admins = repository.findAll();
+    public ResponseEntity<List<Plano>> listarPlanos(){
+        List<Plano> planos = planoService.listarTodosPlanos();
 
-        if (admins.isEmpty()){
-            log.warn("Nenhum admin encontrado."); // Log de aviso
-            return ResponseEntity.notFound().build();
-        }
-        log.info("Listando {} produtos.", admins.size()); // Log de sucesso
-        return ResponseEntity.ok(admins);
+        return planos.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(planos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Plano> buscarPorId(@PathVariable("id") Long id){
-        return repository.findById(id)
-                //.map() é útil quando queremos transformar um valor, caso ele exista(Optionals), muito util em Get id's.
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Plano> buscarPlanoPorId(@PathVariable("id") Long id){
+        Plano plano = planoService.buscarPlanoPorId(id);
+        return ResponseEntity.ok(plano);
     }
 
-
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        if (repository.existsById(id)) {  // Verifica se o ID existe antes de tentar deletar
-            repository.deleteById(id);
-            log.info("Admin cliente com id: {}", id); //log de sucesso
-            return ResponseEntity.noContent().build(); // Retorna 204 No Content quando a exclusão é bem-sucedida
-        } else {
-            log.warn("Tentativa de cliente admin com ID inexistente: {}", id);  // Log de aviso
-            return ResponseEntity.notFound().build(); // Retorna 404 caso o registro não exista
-        }
+    public ResponseEntity<?> deletarPorId(@PathVariable("id") Long id){
+        planoService.deletarPlanoPorId(id);
+        return ResponseEntity.noContent().build();
     }
 }
