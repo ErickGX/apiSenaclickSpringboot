@@ -15,7 +15,7 @@ public class Assinatura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     private Cliente cliente;
 
     @ManyToOne

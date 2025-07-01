@@ -1,8 +1,10 @@
 package com.erickgx.api_rest_senaclick.services;
 
 
-import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteRequestDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteUpdateDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteListResponseDTO;
 import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteResponseDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteUpdatedDTO;
 import com.erickgx.api_rest_senaclick.exceptions.DuplicateEmailException;
 import com.erickgx.api_rest_senaclick.exceptions.ResourceNotFoundException;
 import com.erickgx.api_rest_senaclick.mappers.ClienteMapper;
@@ -11,7 +13,7 @@ import com.erickgx.api_rest_senaclick.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -23,6 +25,7 @@ public class ClienteService {
         this.clienterepository = clienterepository;
         this.mapper = mapper;
     }
+
 
     public Cliente cadastrarCliente(Cliente cliente){
 
@@ -37,20 +40,40 @@ public class ClienteService {
     }
 
     //Regra de negocio pode ter lista vazia , caso não , Lançar exceptions
-    public List<Cliente> listarTodosClientes(){
-        return clienterepository.findAll();
+    public List<ClienteListResponseDTO> listarTodosClientes(){
+
+        return clienterepository.findAll().stream()
+                .map(mapper::toListDto)
+                .collect(Collectors.toList());
     }
 
-    public Cliente buscarClientePorId(Long idCliente){
-        return clienterepository.findById(idCliente)
+    public ClienteListResponseDTO buscarClientePorId(Long idCliente){
+      Cliente cliente =  clienterepository.findById(idCliente)
                 .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado cliente com ID: "+idCliente));
+
+      return mapper.toListDto(cliente);
 
     }
 
     public void deletarClientePorId(Long idCliente){
       Cliente cliente =  clienterepository.findById(idCliente)
               .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado cliente com ID: "+idCliente+" para excluir"));
-
        clienterepository.deleteById(idCliente);
+    }
+
+    public ClienteUpdatedDTO atualizarClientePartial(Long idCliente , ClienteUpdateDTO dto){
+
+        Cliente cliente = clienterepository.findById(idCliente)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: "+idCliente+" para atualizar"));
+
+        //mesclagem dos novos valores de campos do front=end com a entidade achada no estado anterior
+        mapper.updateClienteFromDto(dto, cliente);
+
+        //atualização da entidade atualizada com os novos campos
+        Cliente atualizado = clienterepository.save(cliente);
+
+        //conversão da entidade atualizada para a dto de resposta de atualizaçao
+        return mapper.toUpdatedDto(cliente);
+
     }
 }

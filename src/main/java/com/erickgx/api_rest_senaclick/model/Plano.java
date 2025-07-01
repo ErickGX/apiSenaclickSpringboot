@@ -33,7 +33,7 @@ public class Plano {
 
     @OneToMany(mappedBy = "plano")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List<Assinatura> clientes;
+    private List<Assinatura> assinaturas;
 
 
 }

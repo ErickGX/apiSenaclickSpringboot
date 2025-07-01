@@ -1,8 +1,10 @@
 package com.erickgx.api_rest_senaclick.controller;
 
-import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteRequestDTO;
-import com.erickgx.api_rest_senaclick.dtos.cliente.requests.dtoClientePlanoRequest;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteSaveDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteUpdateDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteListResponseDTO;
 import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteResponseDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteUpdatedDTO;
 import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.orchestrator.ClienteAssinaturaOrchestrator;
 import com.erickgx.api_rest_senaclick.services.ClienteService;
@@ -36,9 +38,10 @@ public class ClienteController {
         this.clienteService = clienteService;
     }
 
+    //Uso de orchestrator para regra de negocio complexa envolvendo varias services
     @PostMapping
-    public ResponseEntity<Object> criarCliente(
-            @RequestBody @Valid ClienteRequestDTO request) {
+    public ResponseEntity<ClienteResponseDTO> criarCliente(
+            @RequestBody @Valid ClienteSaveDTO request) {
 
         ClienteResponseDTO clienteSalvo = orchestrator.cadastrarClienteComPlano(request.getIdPlano(), request, request.getPagamento());
 
@@ -49,8 +52,8 @@ public class ClienteController {
 
 
     @GetMapping
-    public ResponseEntity<List<Cliente>> listarClientes(){
-        List<Cliente> clientes = clienteService.listarTodosClientes();
+    public ResponseEntity<List<ClienteListResponseDTO>> listarClientes(){
+        List<ClienteListResponseDTO> clientes = clienteService.listarTodosClientes();
 
         return clientes.isEmpty()
                 ? ResponseEntity.noContent().build()
@@ -58,8 +61,8 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarClienteId(@PathVariable("id") Long id){
-        Cliente cliente = clienteService.buscarClientePorId(id);
+    public ResponseEntity<ClienteListResponseDTO> buscarClienteId(@PathVariable("id") Long id){
+        ClienteListResponseDTO cliente = clienteService.buscarClientePorId(id);
 
         return ResponseEntity.ok(cliente);
 
@@ -70,6 +73,15 @@ public class ClienteController {
     public ResponseEntity<?> deletarPorId(@PathVariable("id") Long id){
         clienteService.deletarClientePorId(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteUpdatedDTO> atualizarPorId(@PathVariable("id") Long id, @RequestBody @Valid ClienteUpdateDTO cliente){
+     ClienteUpdatedDTO atualizado =  clienteService.atualizarClientePartial(id,cliente);
+
+     //location URI é reservado apenas para criação, indicando a localizacao do novo recurso criado
+     //em atualizações apenas retorna-se a entidade atualizada e 200 ok no maximo
+        return ResponseEntity.ok().body(atualizado);
     }
 
 

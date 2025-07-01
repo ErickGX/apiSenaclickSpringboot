@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 @Getter
-public class ClienteRequestDTO {
+public class ClienteSaveDTO {
 
 
     @NotBlank(message = "Nome é obrigatório")

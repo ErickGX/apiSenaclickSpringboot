@@ -4,15 +4,12 @@
 package com.erickgx.api_rest_senaclick.orchestrator;
 
 
-import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteRequestDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteSaveDTO;
 import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteResponseDTO;
 import com.erickgx.api_rest_senaclick.enums.TipoPagamento;
 import com.erickgx.api_rest_senaclick.mappers.ClienteMapper;
 import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.model.Plano;
-import com.erickgx.api_rest_senaclick.repository.AssinaturaRepository;
-import com.erickgx.api_rest_senaclick.repository.ClienteRepository;
-import com.erickgx.api_rest_senaclick.repository.PlanoRepository;
 import com.erickgx.api_rest_senaclick.services.AssinaturaService;
 import com.erickgx.api_rest_senaclick.services.ClienteService;
 import com.erickgx.api_rest_senaclick.services.PlanoService;
@@ -39,7 +36,7 @@ public class ClienteAssinaturaOrchestrator {
     }
 
     @Transactional
-    public ClienteResponseDTO cadastrarClienteComPlano(Long idPlano, ClienteRequestDTO dto , TipoPagamento pagamento) {
+    public ClienteResponseDTO cadastrarClienteComPlano(Long idPlano, ClienteSaveDTO dto , TipoPagamento pagamento) {
         Cliente cliente = mapper.toEntity(dto);
 
         Plano planoRecuperado = planoService.obterPlanoPorId(idPlano);
