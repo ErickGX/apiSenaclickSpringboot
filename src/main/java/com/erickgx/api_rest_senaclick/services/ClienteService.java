@@ -1,8 +1,11 @@
 package com.erickgx.api_rest_senaclick.services;
 
 
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteRequestDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteResponseDTO;
 import com.erickgx.api_rest_senaclick.exceptions.DuplicateEmailException;
 import com.erickgx.api_rest_senaclick.exceptions.ResourceNotFoundException;
+import com.erickgx.api_rest_senaclick.mappers.ClienteMapper;
 import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -14,9 +17,11 @@ import java.util.Optional;
 public class ClienteService {
 
     private final ClienteRepository clienterepository;
+    private final ClienteMapper mapper;
 
-    public ClienteService(ClienteRepository Clienterepository) {
-        this.clienterepository = Clienterepository;
+    public ClienteService(ClienteRepository clienterepository, ClienteMapper mapper) {
+        this.clienterepository = clienterepository;
+        this.mapper = mapper;
     }
 
     public Cliente cadastrarCliente(Cliente cliente){

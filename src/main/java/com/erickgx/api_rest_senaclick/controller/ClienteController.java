@@ -1,14 +1,11 @@
 package com.erickgx.api_rest_senaclick.controller;
 
-import com.erickgx.api_rest_senaclick.dtos.dtoClientePlanoRequest;
-import com.erickgx.api_rest_senaclick.exceptions.ResourceNotFoundException;
-import com.erickgx.api_rest_senaclick.model.Assinatura;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.ClienteRequestDTO;
+import com.erickgx.api_rest_senaclick.dtos.cliente.requests.dtoClientePlanoRequest;
+import com.erickgx.api_rest_senaclick.dtos.cliente.responses.ClienteResponseDTO;
 import com.erickgx.api_rest_senaclick.model.Cliente;
-import com.erickgx.api_rest_senaclick.model.Plano;
 import com.erickgx.api_rest_senaclick.orchestrator.ClienteAssinaturaOrchestrator;
-import com.erickgx.api_rest_senaclick.services.AssinaturaService;
 import com.erickgx.api_rest_senaclick.services.ClienteService;
-import com.erickgx.api_rest_senaclick.services.PlanoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,9 +38,9 @@ public class ClienteController {
 
     @PostMapping
     public ResponseEntity<Object> criarCliente(
-            @RequestBody @Valid dtoClientePlanoRequest request) {
+            @RequestBody @Valid ClienteRequestDTO request) {
 
-        Cliente clienteSalvo = orchestrator.cadastrarClienteComPlano(request.getIdPlano(), request.getCliente(), request.getTipoPagamento());
+        ClienteResponseDTO clienteSalvo = orchestrator.cadastrarClienteComPlano(request.getIdPlano(), request, request.getPagamento());
 
         URI location = URI.create("/cliente/" + clienteSalvo.getId());
         return ResponseEntity.created(location).body(clienteSalvo);

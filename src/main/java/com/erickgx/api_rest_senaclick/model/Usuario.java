@@ -17,24 +17,19 @@ public abstract class Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //annotations de validadoes de campo foram transferidas para as DTO request
+    //assim dados não validos nem chegam na camada da entidade, aqui fica exclusivamente para ORM
+
     @Column(nullable = false)
-    @NotBlank(message = "Nome é obrigatório")
-    @JsonProperty("primeiroNome") //o campo via JSON vem como primeiroNome , não é necessario alterar o frontend
     private String nome;
 
     @Column(nullable = false)
-    @NotBlank(message = "Sobrenome é obrigatório")
     private String sobrenome;
 
-    @Email(message = "Email inválido")
-    @NotBlank(message = "Email é obrigatório")
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    @NotBlank
-    @Size(min = 8, message = "A senha deve ter no mínimo 6 caracteres")
-    @JsonProperty(access = Access.WRITE_ONLY)
     private String senha;
 
 }

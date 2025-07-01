@@ -1,14 +1,10 @@
 package com.erickgx.api_rest_senaclick.controller;
 
 
-import com.erickgx.api_rest_senaclick.model.Cliente;
 import com.erickgx.api_rest_senaclick.model.Plano;
-import com.erickgx.api_rest_senaclick.repository.PlanoRepository;
 import com.erickgx.api_rest_senaclick.services.PlanoService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

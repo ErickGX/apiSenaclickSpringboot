@@ -21,6 +21,7 @@ public class Assinatura {
     @ManyToOne
     private Plano plano;
 
+
     @Enumerated(EnumType.STRING) //Valores fixos não variaveis é recomendado o uso de Enums
     @JsonProperty("pagamento") //o campo via JSON vem como pagamento , não é necessario alterar o frontend
     private TipoPagamento tipoPagamento;

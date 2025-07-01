@@ -1,0 +1,5 @@
+com\erickgx\api_rest_senaclick\ApiRestSenaclickApplication.class
+com\erickgx\api_rest_senaclick\model\Administrador.class
+com\erickgx\api_rest_senaclick\repository\AdministradorRepository.class
+com\erickgx\api_rest_senaclick\model\Usuario.class
+com\erickgx\api_rest_senaclick\controller\AdministradorController.class
