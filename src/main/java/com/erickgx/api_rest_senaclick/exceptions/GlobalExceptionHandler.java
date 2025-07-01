@@ -52,6 +52,20 @@ public class GlobalExceptionHandler {
 
 
 
+    @ExceptionHandler(DuplicateClasseException.class)
+    public ResponseEntity<ApiError>handleDuplicateEmail(DuplicateClasseException ex, HttpServletRequest request){
+        ApiError error =  new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.CONFLICT.value(),
+                "Dados já registrados",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+
+
 
     // Catch-all para exceções inesperadas , Normalmente retorno codigo 500 Internal Erro
     @ExceptionHandler(Exception.class)

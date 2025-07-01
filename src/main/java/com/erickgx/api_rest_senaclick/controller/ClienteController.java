@@ -70,7 +70,7 @@ public class ClienteController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletarPorId(@PathVariable("id") Long id){
+    public ResponseEntity<Void> deletarPorId(@PathVariable("id") Long id){
         clienteService.deletarClientePorId(id);
         return ResponseEntity.noContent().build();
     }

@@ -15,19 +15,25 @@ public class Plano {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @Column(nullable = false)
     private String titulo;
-    @NotBlank
+
+    @Column(nullable = false)
     private Double preco;
-    @NotBlank
+
+    @Column(nullable = false)
     private String artigo;
-    @NotBlank
+
+    @Column(nullable = false)
     private String noticia;
-    @NotBlank
+
+    @Column(nullable = false)
     private String edicao;
-    @NotBlank
+
+    @Column(nullable = false)
     private String texto_botao;
-    @NotBlank
+
+    @Column(nullable = false, unique = true)
     private String classe;
 
 

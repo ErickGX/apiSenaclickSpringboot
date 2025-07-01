@@ -56,9 +56,9 @@ public class ClienteService {
     }
 
     public void deletarClientePorId(Long idCliente){
-      Cliente cliente =  clienterepository.findById(idCliente)
+        clienterepository.findById(idCliente)
               .orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado cliente com ID: "+idCliente+" para excluir"));
-       clienterepository.deleteById(idCliente);
+          clienterepository.deleteById(idCliente);
     }
 
     public ClienteUpdatedDTO atualizarClientePartial(Long idCliente , ClienteUpdateDTO dto){
@@ -66,10 +66,10 @@ public class ClienteService {
         Cliente cliente = clienterepository.findById(idCliente)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: "+idCliente+" para atualizar"));
 
-        //mesclagem dos novos valores de campos do front=end com a entidade achada no estado anterior
+        //mesclagem dos novos valores de campos do front=end com a entidade achada no estado anterior com
         mapper.updateClienteFromDto(dto, cliente);
 
-        //atualização da entidade atualizada com os novos campos
+        //atualização da entidade atualizada com os novos campos e com id setado para atualizar
         Cliente atualizado = clienterepository.save(cliente);
 
         //conversão da entidade atualizada para a dto de resposta de atualizaçao

@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlanoRepository extends JpaRepository<Plano, Long> {
     boolean existsById(Long idPlano);
+    Boolean existsByClasse(String classe);
 }
